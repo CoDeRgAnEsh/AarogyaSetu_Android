@@ -171,6 +171,38 @@ class SplashActivity : AppCompatActivity(), SelectLanguageFragment.LanguageChang
         }
         return false
     }
+        
+    /**
+     * This method is used to resolve deeplink notification.
+     * Solves Issue #149 - Clicking notifications opens browser instead App.
+     */
+    private fun resolveDeeplinkNotification(intent: Intent) {
+        if (getIntent() != null && getIntent().data != null && !TextUtils.isEmpty(getIntent().data!!.scheme)) // Deeplink
+        {
+            val data = getIntent().data
+            if (!TextUtils.isEmpty(data!!.query) && data.query!!.contains(Constants.DEEPLINK_TAG)) {
+                val paramString =
+                    data.getQueryParameter(Constants.DEEPLINK_TAG)
+                if (!paramString.isNullOrBlank()) {
+                    try {
+                        val tagId = Integer.valueOf(paramString!!)
+                        intent.putExtra(Constants.DEEPLINK_TAG, tagId)
+                    } catch (e: Exception) {}
+                }
+            }
+        } else if (getIntent().hasExtra(Constants.DEEPLINK_TAG)||getIntent().hasExtra(Constants.TARGET)) // Notification
+        {
+            try {
+               val target = getIntent().getStringExtra(Constants.TARGET)
+                if(!target.isNullOrBlank()&& BuildConfig.WEB_HOST.equals(Uri.parse(target).host,ignoreCase = true))
+                if(!target.isNullOrBlank())
+                intent.putExtra(Constants.URL,target)
+                val tagId =
+                    getIntent().getStringExtra(Constants.DEEPLINK_TAG)
+                intent.putExtra(Constants.DEEPLINK_TAG, Integer.valueOf(tagId))
+            } catch (e: Exception) {}
+        }
+    }
 
     private fun showLanguageSelectionDialog() {
         if (supportFragmentManager.isDestroyed) {
