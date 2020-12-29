@@ -45,10 +45,10 @@ class RetrieveLocationService {
                 if (it.lastLocation != null) {
                     val usersLocationData =
                         BluetoothData(
+                            Constants.NULL,
+                            Constants.UNDEFINED,
                             Constants.EMPTY,
-                            0,
-                            Constants.EMPTY,
-                            Constants.EMPTY
+                            0
                         )
                     usersLocationData.latitude = it.lastLocation.latitude
                     usersLocationData.longitude = it.lastLocation.longitude
